@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="demo2">
+        <h3>从文件夹中拖拽图片到下面的区域进行识别</h3>
+        <input type="file" name="file" id="file" multiple/>
+        <ul class="preview"></ul>
+    </div>
+    <div id="demo3" style="display: none;">
+        <h3>扫描结果：</h3>
+        <ul class="result"></ul> 
+    </div>
+    <style>
+      #demo2,#demo3 {margin: 20px;}        
+      #demo2 .preview {height: 450px;background: #ddd; overflow: overlay;}        
+      #demo2 li {float: left;margin-left: 40px; list-style-type: none;}        
+      #demo2 img {max-height: 150px;width: auto;}
+      #demo3 .result {line-height: 50px;padding-left: 10px;font-weight: bold; background: #ddd;}
+      #demo3 .result li{list-style-type: none;}
+    </style>
+    <script src="js/jsQR.js"></script>
+    <!-- <script src="js/grid.js"></script>
+    <script src="js/version.js"></script>
+    <script src="js/detector.js"></script>
+    <script src="js/formatinf.js"></script>
+    <script src="js/errorlevel.js"></script>
+    <script src="js/bitmat.js"></script>
+    <script src="js/datablock.js"></script>
+    <script src="js/bmparser.js"></script>
+    <script src="js/datamask.js"></script>
+    <script src="js/rsdecoder.js"></script>
+    <script src="js/gf256poly.js"></script>
+    <script src="js/gf256.js"></script>
+    <script src="js/decoder.js"></script> -->
+    <script src="js/qrcode.js"></script>
+    <!-- <script src="js/findpat.js"></script>
+    <script src="js/alignpat.js"></script>
+    <script src="js/databr.js"></script> -->
+    <script>
+    (function(w) {
+        var doc = w.document;
+
+        var dnd = {
+            init: function() {
+                var me = this;
+                //拖拽上传
+                var preview = doc.querySelector('#demo2 .preview');
+                preview.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                }, false);
+                preview.addEventListener('drop', function(e) {
+                    // 操作系统拖放文件到浏览器需要取消默认行为
+                    e.preventDefault();
+                    me.analyse(e.dataTransfer.files);                    
+                }, false);
+                //点击上传
+                var input = doc.querySelector('#file');
+                input.addEventListener('change', function(e) { //change 事件监听
+                    me.analyse(this.files);
+                });
+            },
+            analyse: function(files){
+                [].forEach.call(files, function(file) { console.log(file);
+                  if (file && file.type.match('image.*')) {
+                      var reader = new FileReader();
+
+                      reader.onload = function(e) {
+                          var img = doc.createElement('img');
+                          img.src = e.target.result;
+                          var li = doc.createElement('li');
+                          li.appendChild(img);
+                          doc.querySelector('#demo2 .preview').appendChild(li);
+
+                          //解析二维码图片
+                          qrcode.callback = function (d, status) {
+                              var li = doc.createElement('li');
+                              li.innerHTML = ((status == 1) ? "成功," : "失败,") + d;
+                              doc.querySelector('#demo3 .result').appendChild(li);
+                              if(doc.querySelector('#demo3').style.display == 'none'){
+                                  doc.querySelector('#demo3').style.display = 'block';
+                              }                            
+                          }
+
+                          qrcode.decode(e.target.result);
+                      };
+
+                      reader.readAsDataURL(file);
+                  }
+              });
+            }
+        };
+
+        dnd.init();
+    }(window));
+    </script>
+</body>
+
+</html>
