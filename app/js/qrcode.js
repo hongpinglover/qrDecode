@@ -82,6 +82,7 @@ qrcode.decode = function(src){
                 // qrcode.result = qrcode.utf8ToUtf16(qrcode.process(context));
                 var result = jsQR.decodeQRFromImage(qrcode.imagedata.data, qrcode.imagedata.width, qrcode.imagedata.height);
                 if(result == ""){
+                    qrcode.result = "fail decoding QR Code";
                     qrcode.status = 0;
                 }else{
                     qrcode.result = qrcode.utf8ToUtf16(result);
